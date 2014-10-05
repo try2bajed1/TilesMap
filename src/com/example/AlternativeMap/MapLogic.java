@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class MapLogic {
 
-    private static final SmartPoint tilesNum = new SmartPoint(100, 100);
+    private static final SmartPoint tilesNum = new SmartPoint(30, 30);
     private static final SmartPoint totalSize = tilesNum.mul(Tile.tileSize);
 
 
@@ -50,6 +50,13 @@ public class MapLogic {
 
     public void update(SmartPoint delta) {
         globalTopLeftCorner = globalTopLeftCorner.add(delta);
+        if (globalTopLeftCorner.x > 0) globalTopLeftCorner.x = 0;
+        if (globalTopLeftCorner.y > 0) globalTopLeftCorner.y = 0;
+
+        SmartPoint totalDiff = totalSize.add(globalTopLeftCorner);
+        if (totalDiff.x < 0) globalTopLeftCorner.x = -totalSize.x;
+        if (totalDiff.y < 0) globalTopLeftCorner.y = -totalSize.y;
+
         updateTiles();
         reDraw();
     }
