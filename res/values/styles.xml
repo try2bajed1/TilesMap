@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- http://stackoverflow.com/a/3950259/2227289 -->
+    <style name="Theme.NoBackground" parent="android:Theme.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@null</item>
+
+    </style>
+</resources>
