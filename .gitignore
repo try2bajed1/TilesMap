@@ -27,4 +27,7 @@ proguard/
 
 # Idea
 .idea
+*.iml
+
+*.txt
 
