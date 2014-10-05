@@ -3,7 +3,6 @@ package com.example.AlternativeMap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,16 +20,21 @@ public class MapLogic {
     private static final SmartPoint tilesNum = new SmartPoint(100, 100);
     private static final SmartPoint totalSize = tilesNum.mul(Tile.tileSize);
 
+
     private TilesCache cache = new TilesCache();
+
 
     private TilesView view;
     private SmartPoint screenSize;
 
+
     private final SmartPoint screenTopLeftCorner = new SmartPoint(0, 0);
     private SmartPoint globalTopLeftCorner;
 
+
     private HashMap<SmartPoint, Tile> visibleTiles = new HashMap<SmartPoint, Tile>();
     private Paint paint;
+
 
 
     public MapLogic(TilesView view, Point screenSize) {
@@ -41,6 +45,7 @@ public class MapLogic {
         globalTopLeftCorner = this.screenSize.diff(totalSize).div(2);    // -12000 -11520
         updateTiles();
     }
+
 
 
     public void update(SmartPoint delta) {
@@ -56,7 +61,7 @@ public class MapLogic {
 //        view.postInvalidate();
 
         synchronized (view) {
-            Log.i("@", "### postInvalidate");
+//            Log.i("@", "### postInvalidate");
             view.postInvalidate();
         }
     }
@@ -88,17 +93,6 @@ public class MapLogic {
             }
         }
 
-
-/*
-        for (Integer key : visibleTiles.keySet()) {
-            if (keysToPoints.containsKey(key)) {
-                keysToPoints.remove(key);
-            } else {
-                visibleTiles.remove(key);
-            }
-        }
-*/
-
         Iterator it = visibleTiles.entrySet().iterator();
         while (it.hasNext()){
             Map.Entry<SmartPoint, Tile> entry = (Map.Entry<SmartPoint, Tile>) it.next();
@@ -106,27 +100,13 @@ public class MapLogic {
             if (keysToPoints.contains(entry.getKey())) {
                 keysToPoints.remove(entry.getKey());
             } else {
-                //visibleTiles.remove(key);
-
-//                cache.erase(entry.getKey());
-                entry.getValue().cancel();
+                entry.getValue().remove();
                 it.remove();
             }
         }
 
-        int n = 0;
-        synchronized (visibleTiles) {
-            n = visibleTiles.size();
-        }
-
-        if (n > 100) {
-            Log.i("@"," reoved >>");
-        }
-
-        Log.i("@"," Hello %)) <<< " + n);
-
         for (SmartPoint key : keysToPoints) {
-            visibleTiles.put(key, cache.get(key));
+            visibleTiles.put(key, new Tile(this, key));
         }
     }
 }

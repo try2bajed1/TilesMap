@@ -3,7 +3,6 @@ package com.example.AlternativeMap;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Build;
 import android.util.Log;
 
 /**
@@ -14,52 +13,40 @@ import android.util.Log;
  */
 public class Tile {
 
+
     public static final int tileSize = 256;
     private static final String remoteUrl = "http://b.tile.opencyclemap.org/cycle/16/"; //   33198/22539
     private static final String filePrefix = "tile-";
     private static final String imageExt = ".png";
     private static  String savedFilePath;
 
-    private static Bitmap defaultBitmap;
-    private static MapLogic commonMap;
-    private static TileLoader commonLoader = new TileLoader();
+//    private static Bitmap defaultBitmap;
+    private static TilesCache commonCache = new TilesCache();
 
+    private MapLogic map;
     private SmartPoint index;
     private Bitmap bitmap = null;
 
-    public static void setDefaultBitmap(Bitmap bitmap) {
-        defaultBitmap = bitmap;
-    }
 
-    public static void setMap(MapLogic map) {
-        commonMap = map;
-    }
-
+//    public static void setDefaultBitmap(Bitmap bitmap) {
+//        defaultBitmap = bitmap;
+//    }
+//
     public static void setSavedFilePath(String path) {
 
         savedFilePath = path;
     }
 
-    public Tile(SmartPoint index) {
+    public Tile(MapLogic map, SmartPoint index) {
+        this.map = map;
         this.index = index;
-        commonLoader.load(this);
+        commonCache.load(this);
     }
 
-    public void cancel() {
-        commonLoader.cancel(this);
+    public void remove() {
+        commonCache.cancel(this);
     }
 
-    public int sizeOf() {
-        if (bitmap != null) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
-                return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024;
-            } else {
-                return bitmap.getByteCount() / 1024;
-            }
-        } else {
-            return 0;
-        }
-    }
 
     public String path() {
         Log.i("@", "save to "+ savedFilePath + "/" + filePrefix+ nameSuffix("-"));
@@ -72,8 +59,10 @@ public class Tile {
 
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
-        commonMap.reDraw();
+        map.reDraw();
     }
+
+
 
     public void drawTo(Canvas canvas, Paint paint, SmartPoint globalTopLeftCorner) {
         if (bitmap != null) {

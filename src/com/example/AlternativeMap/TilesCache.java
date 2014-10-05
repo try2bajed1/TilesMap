@@ -1,5 +1,8 @@
 package com.example.AlternativeMap;
 
+import android.graphics.Bitmap;
+import android.os.Build;
+import android.util.Log;
 import android.util.LruCache;
 
 /**
@@ -9,32 +12,54 @@ import android.util.LruCache;
  * Time: 13:58
  */
 public class TilesCache {
-    LruCache<SmartPoint, Tile> allTiles;
+
+    private
+    LruCache<Tile, Bitmap> tilesToBitmaps;
+    private TilesLoader loader;
 
     public TilesCache() {
-        int systemMaxMemory = (int) Runtime.getRuntime().maxMemory() / 1024;
-        int maxCacheSize = systemMaxMemory / 4;
+        loader = new TilesLoader(this);
 
-        allTiles = new LruCache<SmartPoint, Tile>(maxCacheSize) {
+        int systemMaxMemory = (int) Runtime.getRuntime().maxMemory() / (1024 * 1024);
+        int maxCacheSize = systemMaxMemory / 2;
+
+        tilesToBitmaps = new LruCache<Tile, Bitmap>(maxCacheSize) {
             @Override
-            protected int sizeOf(SmartPoint key, Tile tile) {
-                return tile.sizeOf();
+            protected int sizeOf(Tile _, Bitmap bitmap) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
+                    return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024;
+                } else {
+                    return bitmap.getByteCount() / 1024;
+                }
             }
         };
     }
 
-    public Tile get(SmartPoint tileIndex) {
-        Tile tile = allTiles.get(tileIndex);
-        if (tile != null) {
-            return tile;
+    public void load(Tile tile) {
+        int n = -19;
+        synchronized (tilesToBitmaps) {
+            n = tilesToBitmaps.size();
+        }
+
+        Log.i("@"," Tiles check cache for bitmap + CACHE CONTAINS <<< " + n);
+
+        Bitmap bitmap = tilesToBitmaps.get(tile);
+        if (bitmap != null) {
+            Log.i("@"," bitmap already exists " + n);
+            tile.setBitmap(bitmap);
         } else {
-            Tile newTile = new Tile(tileIndex);
-            allTiles.put(tileIndex, newTile);
-            return newTile;
+            Log.i("@"," loader CALL " + n);
+            loader.load(tile);
         }
     }
 
-    public void erase(SmartPoint tileIndex) {
-        allTiles.remove(tileIndex);
+    public void loadComplete(Tile tile, Bitmap bitmap) {
+        tilesToBitmaps.put(tile, bitmap);
+    }
+
+    public void cancel(Tile tile) {
+        if (tilesToBitmaps.get(tile) == null) {
+            loader.cancel(tile);
+        }
     }
 }

@@ -2,11 +2,8 @@ package com.example.AlternativeMap;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -27,9 +24,9 @@ public class TilesView extends View {
     public TilesView(Context context) {
         super(context);
 
-        Drawable myDrawable = getResources().getDrawable(R.drawable.item1);
-        Bitmap bm = ((BitmapDrawable) myDrawable).getBitmap();
-        Tile.setDefaultBitmap(bm);
+//        Drawable myDrawable = getResources().getDrawable(R.drawable.item1);
+//        Bitmap bm = ((BitmapDrawable) myDrawable).getBitmap();
+//        Tile.setDefaultBitmap(bm);
         //Log.i("@","set folder "+Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
 //        Tile.setSavedFilePath(Environment.getExternalStorageDirectory().getAbsolutePath());
         Tile.setSavedFilePath(context.getCacheDir().getAbsolutePath());
@@ -37,7 +34,6 @@ public class TilesView extends View {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         map = new MapLogic(this, new Point(displaymetrics.widthPixels, displaymetrics.heightPixels));
-        Tile.setMap(map);
 
 //        thread = new Thread(this);
 
@@ -77,7 +73,7 @@ public class TilesView extends View {
             map.update(delta);
             prevPosition = currPos;
 
-            Log.i("@","crd "+cx+" "+cy);
+//            Log.i("@","crd "+cx+" "+cy);
         }
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
