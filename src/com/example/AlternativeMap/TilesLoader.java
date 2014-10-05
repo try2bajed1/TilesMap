@@ -3,7 +3,6 @@ package com.example.AlternativeMap;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.io.*;
 import java.lang.ref.WeakReference;
@@ -36,14 +35,11 @@ public class TilesLoader {
     }
 
     public void cancel(Tile tile) {
-        boolean result = queue.remove(tile);
-        if (result) {
-            Log.i("@","%%%%%%%%%%%%%          ARE YOU HERE?    ***** ");
-        }
+        queue.remove(tile);
+
 
         LoadTask task = tasks.get(tile);
         if (task != null && task.getStatus() == AsyncTask.Status.RUNNING) {
-            Log.e("@","%%%%%%%%%%%%%          cancel *****");
             task.cancel(true);
         }
     }
@@ -120,10 +116,8 @@ public class TilesLoader {
 
             // Сначала проверяем загружен ли файл на устройство
             if (imageFile.exists()) {
-                Log.i("@","get from file");
                 return BitmapFactory.decodeFile(path);
             } else {
-                Log.i("@","get from internet");
                 return downloadBitmap(imageFile, url);
             }
         }
@@ -139,7 +133,7 @@ public class TilesLoader {
                 OutputStream output = new FileOutputStream(tempFile);
 
                 byte[] buffer = new byte[1024];
-                int bytesRead = 0;
+                int bytesRead;
                 while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
                     if (isCancelled()) {
                         output.close();
@@ -156,9 +150,7 @@ public class TilesLoader {
                 if (tempFile.exists()) {
                     tempFile.renameTo(imageFile);
                     bitmap = BitmapFactory.decodeFile(imageFile.getPath());
-                    Log.i("@","rename to origin " + imageFile);
                 }
-
 
             }
 

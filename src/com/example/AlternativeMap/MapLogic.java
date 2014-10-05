@@ -21,9 +21,6 @@ public class MapLogic {
     private static final SmartPoint totalSize = tilesNum.mul(Tile.tileSize);
 
 
-    private TilesCache cache = new TilesCache();
-
-
     private TilesView view;
     private SmartPoint screenSize;
 
@@ -42,7 +39,7 @@ public class MapLogic {
         this.screenSize = new SmartPoint(screenSize);
 
         paint = getPaint();
-        globalTopLeftCorner = this.screenSize.diff(totalSize).div(2);    // -12000 -11520
+        globalTopLeftCorner = this.screenSize.diff(totalSize).div(2);
         updateTiles();
     }
 
@@ -65,10 +62,7 @@ public class MapLogic {
 
     public void reDraw() {
 
-//        view.postInvalidate();
-
         synchronized (view) {
-//            Log.i("@", "### postInvalidate");
             view.postInvalidate();
         }
     }

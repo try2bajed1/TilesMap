@@ -2,7 +2,6 @@ package com.example.AlternativeMap;
 
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.util.Log;
 import android.util.LruCache;
 
 /**
@@ -25,7 +24,7 @@ public class TilesCache {
         pointsToBitmaps = new LruCache<SmartPoint, Bitmap>(maxCacheSize) {
             @Override
             protected int sizeOf(SmartPoint _, Bitmap bitmap) {
-                int bytes = 0;
+                int bytes;
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
                     bytes = bitmap.getRowBytes() * bitmap.getHeight();
                 } else {
@@ -41,19 +40,11 @@ public class TilesCache {
 
 
     public void load(Tile tile) {
-        int n = -19;
-        synchronized (pointsToBitmaps) {
-            n = pointsToBitmaps.size();
-        }
-
-        Log.i("@"," Tiles check cache for bitmap + CACHE CONTAINS <<< " + n);
 
         Bitmap bitmap = pointsToBitmaps.get(tile.getIndex());
         if (bitmap != null) {
-            Log.i("@"," bitmap already exists " + n);
             tile.setBitmap(bitmap);
         } else {
-            Log.i("@"," loader CALL " + n);
             loader.load(tile);
         }
     }

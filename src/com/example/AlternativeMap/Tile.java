@@ -3,7 +3,6 @@ package com.example.AlternativeMap;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,7 +52,6 @@ public class Tile {
 
 
     public String path() {
-        Log.i("@", " tile path: "+ savedFilePath + "/" + filePrefix+ nameSuffix("-"));
         return savedFilePath + "/" + filePrefix+ nameSuffix("-");
     }
 
