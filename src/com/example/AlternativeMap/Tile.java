@@ -17,8 +17,8 @@ public class Tile {
     public static final int tileSize = 256;
     private static final String remoteUrl = "http://b.tile.opencyclemap.org/cycle/16/"; //   33198/22539
     private static final String filePrefix = "tile-";
-    private static  String savedfilePath;
     private static final String imageExt = ".png";
+    private static  String savedFilePath;
 
     private static Bitmap defaultBitmap;
     private static MapLogic commonMap;
@@ -37,7 +37,7 @@ public class Tile {
 
     public static void setSavedFilePath(String path) {
 
-        savedfilePath = path;
+        savedFilePath = path;
     }
 
     public Tile(SmartPoint index) {
@@ -62,8 +62,8 @@ public class Tile {
     }
 
     public String path() {
-        Log.i("@", "save to "+ savedfilePath + "/" + filePrefix+ nameSuffix("-"));
-        return savedfilePath + "/" + filePrefix+ nameSuffix("-");
+        Log.i("@", "save to "+ savedFilePath + "/" + filePrefix+ nameSuffix("-"));
+        return savedFilePath + "/" + filePrefix+ nameSuffix("-");
     }
 
     public String url() {
@@ -78,11 +78,6 @@ public class Tile {
     public void drawTo(Canvas canvas, Paint paint, SmartPoint globalTopLeftCorner) {
         if (bitmap != null) {
             SmartPoint seek = index.mul(tileSize).add(globalTopLeftCorner);
-//        SmartPoint begin = index.mul(tileSize).diff(globalTopLeftCorner);
-//        SmartPoint nextIndex = new SmartPoint(index.x + 1, index.y + 1);
-//        SmartPoint end = nextIndex.mul(tileSize).diff(globalTopLeftCorner);
-//        SmartPoint seek = begin.diff(end);
-//            canvas.drawBitmap(getBitmap(), seek.x, seek.y, paint);
             canvas.drawBitmap(bitmap, seek.x, seek.y, paint);
         }
     }
@@ -90,12 +85,4 @@ public class Tile {
     private String nameSuffix(String sep) {
         return "" + (33100 + index.x) + sep + (22500 + index.y) + imageExt;
     }
-
-//    private Bitmap getBitmap() {
-//        if (bitmap == null) {
-//            return defaultBitmap;
-//        } else {
-//            return bitmap;
-//        }
-//    }
 }

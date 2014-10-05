@@ -96,15 +96,8 @@ public class TilesView extends View {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         map.draw(canvas);
-
-   /*     Drawable myDrawable = getResources().getDrawable(R.drawable.item1);
-        Bitmap bm = ((BitmapDrawable) myDrawable).getBitmap();
-        canvas.drawBitmap(bm, 0, 0,new Paint());*/
-
         Log.i("@","draw");
     }
-
-
 
 //    @Override
 //    public void run() {

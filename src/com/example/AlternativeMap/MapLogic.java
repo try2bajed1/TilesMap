@@ -63,14 +63,6 @@ public class MapLogic {
 
 
     public void draw(Canvas canvas) {
-
-
-        /*Tile tile = (Tile) visibleTiles.values().toArray()[0];
-        if(tile !=null)
-            tile.drawTo(canvas, paint, globalTopLeftCorner);*/
-
-
-
         for (Tile tile : visibleTiles.values()) {
             tile.drawTo(canvas, paint, globalTopLeftCorner);
         }
