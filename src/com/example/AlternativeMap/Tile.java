@@ -43,13 +43,17 @@ public class Tile {
         commonCache.load(this);
     }
 
+    public SmartPoint getIndex() {
+        return index;
+    }
+
     public void remove() {
         commonCache.cancel(this);
     }
 
 
     public String path() {
-        Log.i("@", "save to "+ savedFilePath + "/" + filePrefix+ nameSuffix("-"));
+        Log.i("@", " tile path: "+ savedFilePath + "/" + filePrefix+ nameSuffix("-"));
         return savedFilePath + "/" + filePrefix+ nameSuffix("-");
     }
 

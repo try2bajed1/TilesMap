@@ -13,37 +13,42 @@ import android.util.LruCache;
  */
 public class TilesCache {
 
-    private
-    LruCache<Tile, Bitmap> tilesToBitmaps;
+    private LruCache<SmartPoint, Bitmap> pointsToBitmaps;
     private TilesLoader loader;
 
     public TilesCache() {
         loader = new TilesLoader(this);
 
-        int systemMaxMemory = (int) Runtime.getRuntime().maxMemory() / (1024 * 1024);
-        int maxCacheSize = systemMaxMemory / 2;
+        final int systemMaxMemory = (int) Runtime.getRuntime().maxMemory() / 1024;
+        final int maxCacheSize = systemMaxMemory / 2;
 
-        tilesToBitmaps = new LruCache<Tile, Bitmap>(maxCacheSize) {
+        pointsToBitmaps = new LruCache<SmartPoint, Bitmap>(maxCacheSize) {
             @Override
-            protected int sizeOf(Tile _, Bitmap bitmap) {
+            protected int sizeOf(SmartPoint _, Bitmap bitmap) {
+                int bytes = 0;
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
-                    return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024;
+                    bytes = bitmap.getRowBytes() * bitmap.getHeight();
                 } else {
-                    return bitmap.getByteCount() / 1024;
+                    bytes = bitmap.getByteCount();
                 }
+                return bytes / 1024;
             }
         };
     }
 
+
+
+
+
     public void load(Tile tile) {
         int n = -19;
-        synchronized (tilesToBitmaps) {
-            n = tilesToBitmaps.size();
+        synchronized (pointsToBitmaps) {
+            n = pointsToBitmaps.size();
         }
 
         Log.i("@"," Tiles check cache for bitmap + CACHE CONTAINS <<< " + n);
 
-        Bitmap bitmap = tilesToBitmaps.get(tile);
+        Bitmap bitmap = pointsToBitmaps.get(tile.getIndex());
         if (bitmap != null) {
             Log.i("@"," bitmap already exists " + n);
             tile.setBitmap(bitmap);
@@ -54,11 +59,11 @@ public class TilesCache {
     }
 
     public void loadComplete(Tile tile, Bitmap bitmap) {
-        tilesToBitmaps.put(tile, bitmap);
+        pointsToBitmaps.put(tile.getIndex(), bitmap);
     }
 
     public void cancel(Tile tile) {
-        if (tilesToBitmaps.get(tile) == null) {
+        if (pointsToBitmaps.get(tile.getIndex()) == null) {
             loader.cancel(tile);
         }
     }
