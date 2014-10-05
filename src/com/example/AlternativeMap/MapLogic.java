@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class MapLogic {
 
-    private static final SmartPoint tilesNum = new SmartPoint(30, 30);
+    private static final SmartPoint tilesNum = new SmartPoint(100,100);
     private static final SmartPoint totalSize = tilesNum.mul(Tile.tileSize);
 
 
