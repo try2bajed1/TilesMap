@@ -19,14 +19,10 @@ public class MapLogic {
 
     private static final SmartPoint tilesNum = new SmartPoint(100,100);
     private static final SmartPoint totalSize = tilesNum.mul(Tile.tileSize);
-
-
-    private TilesView view;
-    private SmartPoint screenSize;
-
-
+    private TilesView tilesView;
+    private SmartPoint screenSizePoint;
     private final SmartPoint screenTopLeftCorner = new SmartPoint(0, 0);
-    private SmartPoint globalTopLeftCorner;
+    private SmartPoint allTilesBitmapTopLeftCorner;
 
 
     private HashMap<SmartPoint, Tile> visibleTiles = new HashMap<SmartPoint, Tile>();
@@ -34,25 +30,26 @@ public class MapLogic {
 
 
 
-    public MapLogic(TilesView view, Point screenSize) {
-        this.view = view;
-        this.screenSize = new SmartPoint(screenSize);
+    public MapLogic(TilesView tilesView, Point screenSizePoint) {
+        this.tilesView = tilesView;
+        this.screenSizePoint = new SmartPoint(screenSizePoint);
 
         paint = getPaint();
-        globalTopLeftCorner = this.screenSize.diff(totalSize).div(2);
+        allTilesBitmapTopLeftCorner = this.screenSizePoint.diff(totalSize).divide(2);
         updateTiles();
     }
 
 
 
-    public void update(SmartPoint delta) {
-        globalTopLeftCorner = globalTopLeftCorner.add(delta);
-        if (globalTopLeftCorner.x > 0) globalTopLeftCorner.x = 0;
-        if (globalTopLeftCorner.y > 0) globalTopLeftCorner.y = 0;
 
-        SmartPoint totalDiff = totalSize.add(globalTopLeftCorner);
-        if (totalDiff.x < 0) globalTopLeftCorner.x = -totalSize.x;
-        if (totalDiff.y < 0) globalTopLeftCorner.y = -totalSize.y;
+    public void update(SmartPoint delta) {
+        allTilesBitmapTopLeftCorner = allTilesBitmapTopLeftCorner.add(delta);
+        if (allTilesBitmapTopLeftCorner.x > 0) allTilesBitmapTopLeftCorner.x = 0;
+        if (allTilesBitmapTopLeftCorner.y > 0) allTilesBitmapTopLeftCorner.y = 0;
+
+        SmartPoint totalDiff = totalSize.add(allTilesBitmapTopLeftCorner);
+        if (totalDiff.x < 0) allTilesBitmapTopLeftCorner.x = -totalSize.x;
+        if (totalDiff.y < 0) allTilesBitmapTopLeftCorner.y = -totalSize.y;
 
         updateTiles();
         reDraw();
@@ -61,16 +58,15 @@ public class MapLogic {
 
 
     public void reDraw() {
-
-        synchronized (view) {
-            view.postInvalidate();
+        synchronized (tilesView) {
+            tilesView.postInvalidate();
         }
     }
 
 
     public void draw(Canvas canvas) {
         for (Tile tile : visibleTiles.values()) {
-            tile.drawTo(canvas, paint, globalTopLeftCorner);
+            tile.drawTo(canvas, paint, allTilesBitmapTopLeftCorner);
         }
     }
 
@@ -83,13 +79,13 @@ public class MapLogic {
     }
 
     private void updateTiles() {
-        SmartPoint diff = screenTopLeftCorner.diff(globalTopLeftCorner);
-        SmartPoint bottomRight = diff.add(screenSize).div(Tile.tileSize);
-        SmartPoint topLeft = diff.div(Tile.tileSize);
+        SmartPoint delta = screenTopLeftCorner.diff(allTilesBitmapTopLeftCorner);
+        SmartPoint bottomRightTileIndexes = delta.add(screenSizePoint).divide(Tile.tileSize);
+        SmartPoint topLeftTileIndexes     = delta.divide(Tile.tileSize);
 
         HashSet<SmartPoint> keysToPoints = new HashSet<SmartPoint>();
-        for (int y = topLeft.y; y <= bottomRight.y; ++y) {
-            for (int x = topLeft.x; x <= bottomRight.x; ++x) {
+        for (int y = topLeftTileIndexes.y; y <= bottomRightTileIndexes.y; ++y) {
+            for (int x = topLeftTileIndexes.x; x <= bottomRightTileIndexes.x; ++x) {
                 keysToPoints.add(new SmartPoint(x, y));
             }
         }

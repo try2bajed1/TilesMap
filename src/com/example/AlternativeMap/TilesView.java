@@ -20,7 +20,7 @@ public class TilesView extends View {
     public TilesView(Context context) {
         super(context);
 
-        Tile.setSavedFilePath(context.getCacheDir().getAbsolutePath());
+        Tile.setDirForFileSaving(context.getCacheDir().getAbsolutePath());
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);

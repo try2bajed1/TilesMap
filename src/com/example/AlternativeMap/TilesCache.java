@@ -16,6 +16,7 @@ public class TilesCache {
     private TilesLoader loader;
 
     public TilesCache() {
+
         loader = new TilesLoader(this);
 
         final int systemMaxMemory = (int) Runtime.getRuntime().maxMemory() / 1024;
@@ -36,11 +37,7 @@ public class TilesCache {
     }
 
 
-
-
-
     public void load(Tile tile) {
-
         Bitmap bitmap = pointsToBitmaps.get(tile.getIndex());
         if (bitmap != null) {
             tile.setBitmap(bitmap);
@@ -48,6 +45,7 @@ public class TilesCache {
             loader.load(tile);
         }
     }
+
 
     public void loadComplete(Tile tile, Bitmap bitmap) {
         pointsToBitmaps.put(tile.getIndex(), bitmap);

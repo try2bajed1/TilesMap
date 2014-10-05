@@ -17,7 +17,7 @@ public class Tile {
     private static final String remoteUrl = "http://b.tile.opencyclemap.org/cycle/16/"; //   33198/22539
     private static final String filePrefix = "tile-";
     private static final String imageExt = ".png";
-    private static  String savedFilePath;
+    private static  String dirForSaving;
 
 //    private static Bitmap defaultBitmap;
     private static TilesCache commonCache = new TilesCache();
@@ -31,10 +31,12 @@ public class Tile {
 //        defaultBitmap = bitmap;
 //    }
 //
-    public static void setSavedFilePath(String path) {
 
-        savedFilePath = path;
+
+    public static void setDirForFileSaving(String path) {
+        dirForSaving = path;
     }
+
 
     public Tile(MapLogic map, SmartPoint index) {
         this.map = map;
@@ -42,22 +44,26 @@ public class Tile {
         commonCache.load(this);
     }
 
+
     public SmartPoint getIndex() {
         return index;
     }
+
 
     public void remove() {
         commonCache.cancel(this);
     }
 
 
-    public String path() {
-        return savedFilePath + "/" + filePrefix+ nameSuffix("-");
+    public String getPath() {
+        return dirForSaving + "/" + filePrefix+ getNameSuffix("-");
     }
 
-    public String url() {
-        return remoteUrl + nameSuffix("/");
+
+    public String getUrl() {
+        return remoteUrl + getNameSuffix("/");
     }
+
 
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
@@ -68,12 +74,12 @@ public class Tile {
 
     public void drawTo(Canvas canvas, Paint paint, SmartPoint globalTopLeftCorner) {
         if (bitmap != null) {
-            SmartPoint seek = index.mul(tileSize).add(globalTopLeftCorner);
-            canvas.drawBitmap(bitmap, seek.x, seek.y, paint);
+            SmartPoint pointSeekTo = index.mul(tileSize).add(globalTopLeftCorner);
+            canvas.drawBitmap(bitmap, pointSeekTo.x, pointSeekTo.y, paint);
         }
     }
 
-    private String nameSuffix(String sep) {
+    private String getNameSuffix(String sep) {
         return "" + (33100 + index.x) + sep + (22500 + index.y) + imageExt;
     }
 }

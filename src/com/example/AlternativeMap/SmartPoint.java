@@ -30,7 +30,7 @@ public class SmartPoint extends Point {
         return new SmartPoint(x * n, y * n);
     }
 
-    public SmartPoint div(int n) {
+    public SmartPoint divide(int n) {
         return new SmartPoint(x / n, y / n);
     }
 }

@@ -19,26 +19,29 @@ import java.util.HashSet;
  */
 public class TilesLoader {
 
-    TilesCache cache;
+    TilesCache tilesCache;
 
     HashSet<Tile> queue = new HashSet<Tile>();
-    HashMap<Tile, LoadTask> tasks = new HashMap<Tile, LoadTask>();
+    HashMap<Tile, LoadTask> tasksHM = new HashMap<Tile, LoadTask>();
     boolean isReady = true;
 
+
     public TilesLoader(TilesCache cache) {
-        this.cache = cache;
+        this.tilesCache = cache;
     }
+
+
 
     public void load(Tile tile) {
         queue.add(tile);
         updateQueue();
     }
 
+
     public void cancel(Tile tile) {
         queue.remove(tile);
 
-
-        LoadTask task = tasks.get(tile);
+        LoadTask task = tasksHM.get(tile);
         if (task != null && task.getStatus() == AsyncTask.Status.RUNNING) {
             task.cancel(true);
         }
@@ -49,7 +52,7 @@ public class TilesLoader {
             Tile firstTile = (Tile) queue.toArray()[0];
 
             LoadTask task = new LoadTask(firstTile);
-            tasks.put(firstTile, task);
+            tasksHM.put(firstTile, task);
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
                 task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -61,7 +64,7 @@ public class TilesLoader {
 
     private void remove(Tile tile) {
         queue.remove(tile);
-        tasks.remove(tile);
+        tasksHM.remove(tile);
     }
 
     public class LoadTask extends AsyncTask<Object, Void, Bitmap> {
@@ -77,11 +80,12 @@ public class TilesLoader {
             Tile tile = weakTile.get();
 
             if (tile != null) {
-                bitmap = loadBitmap(tile.path(), tile.url());
+                bitmap = loadBitmap(tile.getPath(), tile.getUrl());
             }
 
             return bitmap;
         }
+
 
 
         @Override
@@ -90,13 +94,14 @@ public class TilesLoader {
         }
 
 
+
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             Tile tile = weakTile.get();
             if (tile != null && queue.contains(tile)) {
                 if (bitmap != null) {
                     queue.remove(tile);
-                    cache.loadComplete(tile, bitmap);
+                    tilesCache.loadComplete(tile, bitmap);
                     tile.setBitmap(bitmap);
                 }
                 remove(tile);
@@ -151,7 +156,6 @@ public class TilesLoader {
                     tempFile.renameTo(imageFile);
                     bitmap = BitmapFactory.decodeFile(imageFile.getPath());
                 }
-
             }
 
             return bitmap;
