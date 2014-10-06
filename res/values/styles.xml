@@ -3,7 +3,7 @@
 
     <!-- http://stackoverflow.com/a/3950259/2227289 -->
     <style name="Theme.NoBackground" parent="android:Theme.NoTitleBar.Fullscreen">
-        <item name="android:windowBackground">@null</item>
+        <!--<item name="android:windowBackground">@null</item>-->
 
     </style>
 </resources>
